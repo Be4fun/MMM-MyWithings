@@ -1,2 +1,2 @@
 # MMM-MyWithings
-Access Withings scale data
+simple access Withings scale data
