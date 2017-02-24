@@ -1,9 +1,13 @@
-//MMM-MyWithings.js:
-
+/*MMM-MyWithings.js:
+ *MagicMirror module to display Withings body measurements
+ * https://github.com/Be4fun/MMM-MyWithings
+ * 
+ */
+ 
 Module.register("MMM-MyWithings",{
     // Default module config.
     defaults: {
-        //text: "default text",
+        //header: "default text",
         limit: "7",
         userid: "",
         oauth_consumer_key: "",
@@ -16,7 +20,9 @@ Module.register("MMM-MyWithings",{
 		initialLoadDelay: 0, // 0 seconds delay
 		retryDelay: 2500,
 		apiBase: "http://wbsapi.withings.net/measure",
-		apiAction: "getmeas"
+		apiAction: "getmeas",
+		initialLoadDelay: 0, // 0 seconds delay
+		retryDelay: 2500
 		
     },    
     start: function() {
@@ -29,8 +35,9 @@ Module.register("MMM-MyWithings",{
 		this.fatratio = null;
 		this.measuredate = 0;
 	//	this.show_apidata();
-		this.getapi();
-	//	this.getapi(function(data){ console.log("results in start" + data + "end result"); });
+		this.getApi();
+		this.scheduleUpdate(this.config.initialLoadDelay);
+	//	this.getApi(function(data){ console.log("results in start" + data + "end result"); });
 	},
 
  
@@ -91,8 +98,8 @@ Module.register("MMM-MyWithings",{
 return wrapper;
     },
     
-    getapi: function() {
-		Log.info("enter getapi");
+    getApi: function() {
+		Log.info("enter getApi");
 		var url = this.config.apiBase + this.getPar();
 		//var url = "http://wbsapi.withings.net/measure?action=getmeas"
 		var self = this;
@@ -105,18 +112,17 @@ return wrapper;
 				Log.log("response is" + this.response);
 				self.processAPI(JSON.parse(this.response));
 				} else {
-				//	Log.error(self.name + "error loadingAPI");
-					retry = false;
+					Log.error(self.name + "error loadingAPI");
+					//retry = false;
 					}
 				if (retry) {self.scheduleUpdate((self.loaded) ? -1 : self.config.retryDelay);
-				//console.log("apirequest retry");
 				}
 				};
 			
 		 
 		apiRequest.send();
-		Log.log("apirequest is" + apiRequest);
-		//return success;
+		//Log.log("apirequest is" + apiRequest);
+
 	},
 	
 	/* scheduleUpdate()
@@ -132,7 +138,7 @@ return wrapper;
 
 		var self = this;
 		setTimeout(function() {
-			self.updateWeather();
+			self.getApi();
 		}, nextLoad);
 	},
 	
@@ -166,6 +172,7 @@ return wrapper;
 	
 	processAPI: function (data) {
 		this.updatetime = this.convertEp2Date(data.body.updatetime);
+		//this.updatetime =  new Date(data.body.updatetime * 1000);
 		this.weight = (data.body.measuregrps[0].measures[0].value / 1000).toFixed(2);
 		this.fatratio = (data.body.measuregrps[0].measures[2].value / 1000).toFixed(2);
 		this.measuredate = this.convertEp2Date(data.body.measuregrps[0].date);
