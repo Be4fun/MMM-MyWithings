@@ -1,5 +1,5 @@
 ﻿# MMM-MyWithings
-This module for the MagicMirror shows weight and fat ration using the Withings API (source data for example from a Withings Body Scale).
+This module for the MagicMirror shows weight and fat ratio using the Withings API (source data for example from a Withings Body Scale).
 
 ##Version info
 first test version which allow access to Withings API for last measurement. Displays weight, fat ratio and date of last measurement.
@@ -32,7 +32,7 @@ modules: [
 			module: 'MMM-MyWithings',
 			position: 'top_left',  //Where you want to show your module
 			config:  {
-						//provided from http://oauth.withings.com/api
+					//provided from http://oauth.withings.com/api
 					userid: "", 
 					oauth_consumer_key: "",
 					oauth_signature: "",
